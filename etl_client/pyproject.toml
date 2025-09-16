@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "animal-etl-client"
+version = "0.1.0"
+description = "ETL client for processing animal data from the Animals API"
+authors = [
+    {name = "Developer", email = "dev@example.com"}
+]
+dependencies = [
+    "requests==2.31.0",
+    "pydantic==2.11.9",
+    "python-dotenv==1.0.0",
+    "click==8.1.7",
+    "tenacity==8.2.3",
+    "structlog==23.2.0",
+    "colorama==0.4.6"
+]
+requires-python = ">=3.8"
+readme = "README.md"
+
+[project.scripts]
+animal-etl = "etl_client.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["etl_client*"]

@@ -1,2 +1,0 @@
-# CodingTask
-CodingTask
