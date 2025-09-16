@@ -6,3 +6,7 @@ tenacity==8.2.3
 structlog==23.2.0
 colorama==0.4.6
 tqdm==4.66.1
+
+# Testing dependencies
+pytest==7.4.3
+pytest-cov==4.1.0
