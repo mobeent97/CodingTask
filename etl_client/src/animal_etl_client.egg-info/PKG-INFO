@@ -12,3 +12,4 @@ Requires-Dist: click==8.1.7
 Requires-Dist: tenacity==8.2.3
 Requires-Dist: structlog==23.2.0
 Requires-Dist: colorama==0.4.6
+Requires-Dist: tqdm==4.66.1
