@@ -23,7 +23,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r app/requirements.txt
+        pip install pytest pytest-cov
+        # Install ETL client package
+        cd etl_client && pip install -e . && cd ..
 
     - name: Run tests
       run: |
-        pytest app/
+        pytest --cov --cov-report=term-missing --cov-report=xml
+        pytest tests/ --cov=etl_client --cov-report=term-missing --cov-report=xml --cov-append
