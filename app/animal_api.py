@@ -1,13 +1,8 @@
-import asyncio
-import datetime
-import json
-import os
-import random
-import time
-from typing import Any, Iterator, List, Optional
-
 from fastapi import FastAPI, HTTPException, Request, Response
+import asyncio,datetime, json, os, random, time
+from typing import Any, Iterator, List, Optional
 from pydantic import BaseModel
+
 
 app = FastAPI()
 
