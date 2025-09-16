@@ -1,0 +1,17 @@
+README.md
+pyproject.toml
+src/animal_etl_client.egg-info/PKG-INFO
+src/animal_etl_client.egg-info/SOURCES.txt
+src/animal_etl_client.egg-info/dependency_links.txt
+src/animal_etl_client.egg-info/entry_points.txt
+src/animal_etl_client.egg-info/requires.txt
+src/animal_etl_client.egg-info/top_level.txt
+src/etl_client/__init__.py
+src/etl_client/batch_processor.py
+src/etl_client/cli.py
+src/etl_client/config.py
+src/etl_client/http_client.py
+src/etl_client/models.py
+src/etl_client/pagination.py
+src/etl_client/pipeline.py
+src/etl_client/transformer.py

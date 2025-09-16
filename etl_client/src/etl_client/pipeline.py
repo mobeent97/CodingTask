@@ -41,14 +41,16 @@ class ETLPipeline:
 
             # Success
             elapsed_time = time.time() - start_time
-            logger.info(".2f"            logger.info("ETL Pipeline completed successfully")
+            logger.info(f"ETL Pipeline completed successfully in {elapsed_time:.2f} seconds")
+            logger.info("ETL Pipeline completed successfully")
 
         except KeyboardInterrupt:
             logger.info("ETL Pipeline interrupted by user")
             raise
         except Exception as e:
             elapsed_time = time.time() - start_time
-            logger.error(".2f"            raise
+            logger.error(f"ETL Pipeline failed after {elapsed_time:.2f} seconds: {e}")
+            raise
 
     def _extract_animal_ids(self) -> List[int]:
         """Extract phase: Get all animal IDs from the API."""

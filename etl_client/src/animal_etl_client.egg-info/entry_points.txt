@@ -1,0 +1,2 @@
+[console_scripts]
+animal-etl = etl_client.cli:main
