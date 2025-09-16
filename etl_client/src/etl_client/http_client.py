@@ -1,15 +1,16 @@
 """HTTP client with retry logic for handling API chaos."""
+
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 import requests
 from requests.adapters import HTTPAdapter
 from tenacity import (
+    before_sleep_log,
     retry,
     retry_if_exception_type,
     stop_after_attempt,
     wait_exponential,
-    before_sleep_log,
 )
 from urllib3.util.retry import Retry
 
@@ -25,16 +26,16 @@ class TimeoutHTTPAdapter(HTTPAdapter):
         self.timeout = timeout
         super().__init__(*args, **kwargs)
 
-    def send(self, request, **kwargs):
-        kwargs.setdefault('timeout', self.timeout)
+    def send(self, request, **kwargs) -> requests.Response:
+        kwargs.setdefault("timeout", self.timeout)
         return super().send(request, **kwargs)
 
 
 class AnimalAPIClient:
     """HTTP client for the Animals API with retry logic."""
 
-    def __init__(self):
-        self.base_url = settings.api_base_url.rstrip('/')
+    def __init__(self) -> None:
+        self.base_url = settings.api_base_url.rstrip("/")
         self.timeout = settings.api_timeout
 
         # Configure retry strategy for urllib3
@@ -42,7 +43,7 @@ class AnimalAPIClient:
             total=settings.api_max_retries,
             backoff_factor=settings.api_backoff_multiplier,
             status_forcelist=[500, 502, 503, 504],  # Server errors
-            method_whitelist=["GET", "POST"],  # HTTP methods to retry
+            allowed_methods=["GET", "POST"],  # HTTP methods to retry
         )
 
         # Create session with retry adapter
@@ -56,13 +57,12 @@ class AnimalAPIClient:
         retry=retry_if_exception_type(requests.RequestException),
         stop=stop_after_attempt(settings.api_max_retries),
         wait=wait_exponential(
-            multiplier=settings.api_retry_delay,
-            max=settings.api_timeout
+            multiplier=settings.api_retry_delay, max=settings.api_timeout
         ),
         before_sleep=before_sleep_log(logger, logging.WARNING),
-        reraise=True
+        reraise=True,
     )
-    def _make_request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
+    def _make_request(self, method: str, endpoint: str, **kwargs: Any) -> requests.Response:
         """Make HTTP request with retry logic."""
         url = f"{self.base_url}{endpoint}"
         logger.debug(f"Making {method} request to {url}")
@@ -87,9 +87,6 @@ class AnimalAPIClient:
         """Post a batch of animals to the home endpoint."""
         endpoint = "/animals/v1/home"
         response = self._make_request(
-            "POST",
-            endpoint,
-            json=animals,
-            headers={"Content-Type": "application/json"}
+            "POST", endpoint, json=animals, headers={"Content-Type": "application/json"}
         )
         return response.json()

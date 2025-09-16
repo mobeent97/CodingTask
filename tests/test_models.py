@@ -44,7 +44,7 @@ class TestAnimalModels:
         assert animal.friends == []
 
     def test_transformed_animal_born_at_transformation(self):
-        """Test that born_at timestamp is transformed to datetime."""
+        """Test that born_at timestamp is transformed to ISO8601 string."""
         # 2022-01-01 00:00:00 UTC in milliseconds
         timestamp_ms = 1640995200000
 
@@ -55,8 +55,9 @@ class TestAnimalModels:
             friends="Dog"
         )
 
-        expected_datetime = datetime.fromtimestamp(timestamp_ms / 1000)
-        assert animal.born_at == expected_datetime
+        expected_iso_string = datetime.fromtimestamp(timestamp_ms / 1000).isoformat()
+        assert animal.born_at == expected_iso_string
+        assert isinstance(animal.born_at, str)
 
     def test_transformed_animal_none_born_at(self):
         """Test handling of None born_at value."""

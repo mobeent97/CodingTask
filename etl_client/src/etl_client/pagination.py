@@ -1,12 +1,12 @@
 """Pagination handler for fetching all animals from the API."""
+
 import logging
-from typing import List, Optional
+from typing import List
 
 from tqdm import tqdm
 
-from .config import settings
 from .http_client import AnimalAPIClient
-from .models import AnimalsPage, BaseAnimal
+from .models import AnimalsPage
 
 logger = logging.getLogger(__name__)
 
@@ -32,7 +32,9 @@ class PaginationHandler:
                     animal_ids = [animal.id for animal in page_data.items]
 
                     all_animal_ids.extend(animal_ids)
-                    logger.debug(f"Fetched page {page}/{page_data.total_pages} with {len(animal_ids)} animals")
+                    logger.debug(
+                        f"Fetched page {page}/{page_data.total_pages} with {len(animal_ids)} animals"
+                    )
 
                     if total_pages is None:
                         total_pages = page_data.total_pages
@@ -49,7 +51,9 @@ class PaginationHandler:
                     page += 1
                     continue
 
-        logger.info(f"Successfully fetched {len(all_animal_ids)} animal IDs from {total_pages} pages")
+        logger.info(
+            f"Successfully fetched {len(all_animal_ids)} animal IDs from {total_pages} pages"
+        )
         return all_animal_ids
 
     def _fetch_animals_page(self, page: int) -> AnimalsPage:

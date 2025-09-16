@@ -1,10 +1,10 @@
 """Main ETL pipeline orchestrator."""
+
 import logging
 import time
 from typing import List
 
 from .batch_processor import BatchProcessor
-from .config import settings
 from .http_client import AnimalAPIClient
 from .pagination import PaginationHandler
 from .transformer import AnimalTransformer
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class ETLPipeline:
     """Main ETL pipeline that orchestrates the entire animal processing workflow."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the ETL pipeline with all components."""
         self.http_client = AnimalAPIClient()
         self.pagination_handler = PaginationHandler(self.http_client)
@@ -41,7 +41,9 @@ class ETLPipeline:
 
             # Success
             elapsed_time = time.time() - start_time
-            logger.info(f"ETL Pipeline completed successfully in {elapsed_time:.2f} seconds")
+            logger.info(
+                f"ETL Pipeline completed successfully in {elapsed_time:.2f} seconds"
+            )
             logger.info("ETL Pipeline completed successfully")
 
         except KeyboardInterrupt:

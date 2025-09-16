@@ -1,6 +1,4 @@
 """Configuration management for the Animal ETL client."""
-import os
-from typing import Optional
 
 from pydantic import Field
 from pydantic_settings import BaseSettings
@@ -10,19 +8,19 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
     # API Configuration
-    api_base_url: str = Field(default="http://localhost:3123", env="API_BASE_URL")
-    api_timeout: int = Field(default=30, env="API_TIMEOUT")
-    api_max_retries: int = Field(default=5, env="API_MAX_RETRIES")
-    api_retry_delay: float = Field(default=1.0, env="API_RETRY_DELAY")
-    api_backoff_multiplier: float = Field(default=2.0, env="API_BACKOFF_MULTIPLIER")
+    api_base_url: str = Field(default="http://localhost:3123")
+    api_timeout: int = Field(default=30)
+    api_max_retries: int = Field(default=5)
+    api_retry_delay: float = Field(default=1.0)
+    api_backoff_multiplier: float = Field(default=2.0)
 
     # Processing Configuration
-    batch_size: int = Field(default=100, env="BATCH_SIZE")
-    max_workers: int = Field(default=4, env="MAX_WORKERS")
+    batch_size: int = Field(default=100)
+    max_workers: int = Field(default=4)
 
     # Logging Configuration
-    log_level: str = Field(default="INFO", env="LOG_LEVEL")
-    log_format: str = Field(default="json", env="LOG_FORMAT")
+    log_level: str = Field(default="INFO")
+    log_format: str = Field(default="json")
 
     class Config:
         env_file = ".env"

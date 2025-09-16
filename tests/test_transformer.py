@@ -67,8 +67,8 @@ class TestAnimalTransformer:
 
         result = transformer.transform_animal(invalid_animal)
 
-        # Should handle gracefully
-        assert result.friends == ["Invalid", "Format", ""]  # Empty string at end
+        # Should handle gracefully - empty strings are filtered out
+        assert result.friends == ["Invalid", "Format"]  # Empty strings filtered out
 
     def test_transform_empty_batch(self, transformer):
         """Test transforming an empty batch."""

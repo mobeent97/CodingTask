@@ -1,4 +1,5 @@
 """Batch processor for fetching animal details and posting to home endpoint."""
+
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Optional
@@ -28,15 +29,19 @@ class BatchProcessor:
 
         # Process in batches for memory efficiency
         for i in range(0, len(animal_ids), self.batch_size):
-            batch_ids = animal_ids[i:i + self.batch_size]
-            logger.info(f"Processing batch {i//self.batch_size + 1} with {len(batch_ids)} animals")
+            batch_ids = animal_ids[i : i + self.batch_size]
+            logger.info(
+                f"Processing batch {i//self.batch_size + 1} with {len(batch_ids)} animals"
+            )
 
             try:
                 # Fetch details for this batch
                 animal_details = self._fetch_animal_details_batch(batch_ids)
 
                 # Transform the data
-                transformed_animals = self.transformer.transform_animals_batch(animal_details)
+                transformed_animals = self.transformer.transform_animals_batch(
+                    animal_details
+                )
 
                 # Post to home endpoint
                 if transformed_animals:
@@ -69,7 +74,7 @@ class BatchProcessor:
                 as_completed(future_to_id),
                 total=len(animal_ids),
                 desc="Fetching animal details",
-                unit="animal"
+                unit="animal",
             ):
                 animal_id = future_to_id[future]
                 try:
@@ -96,17 +101,23 @@ class BatchProcessor:
     def _post_animals_batch(self, transformed_animals: List[TransformedAnimal]) -> None:
         """Post a batch of transformed animals to the home endpoint."""
         if len(transformed_animals) > 100:
-            logger.error(f"Batch size {len(transformed_animals)} exceeds maximum of 100")
+            logger.error(
+                f"Batch size {len(transformed_animals)} exceeds maximum of 100"
+            )
             raise ValueError("Batch size cannot exceed 100 animals")
 
-        logger.debug(f"Posting batch of {len(transformed_animals)} animals to home endpoint")
+        logger.debug(
+            f"Posting batch of {len(transformed_animals)} animals to home endpoint"
+        )
 
         try:
             # Convert to dict for JSON serialization
             animals_dict = [animal.dict() for animal in transformed_animals]
 
             response = self.http_client.post_animals_home(animals_dict)
-            logger.info(f"Successfully posted batch: {response.get('message', 'No message')}")
+            logger.info(
+                f"Successfully posted batch: {response.get('message', 'No message')}"
+            )
 
         except Exception as e:
             logger.error(f"Failed to post animals batch: {e}")

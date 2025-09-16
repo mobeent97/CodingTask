@@ -1,6 +1,7 @@
 """Data transformation logic for animal data."""
+
 import logging
-from typing import List, Optional
+from typing import List
 
 from .models import AnimalDetail, TransformedAnimal
 
@@ -15,11 +16,12 @@ class AnimalTransformer:
         logger.debug(f"Transforming animal {animal_detail.id}: {animal_detail.name}")
 
         try:
+            # The Pydantic validators will handle the transformation
             transformed = TransformedAnimal(
                 id=animal_detail.id,
                 name=animal_detail.name,
-                born_at=animal_detail.born_at,
-                friends=animal_detail.friends
+                born_at=animal_detail.born_at,  # type: ignore
+                friends=animal_detail.friends,  # type: ignore
             )
             logger.debug(f"Successfully transformed animal {animal_detail.id}")
             return transformed
@@ -27,7 +29,9 @@ class AnimalTransformer:
             logger.error(f"Failed to transform animal {animal_detail.id}: {e}")
             raise
 
-    def transform_animals_batch(self, animal_details: List[AnimalDetail]) -> List[TransformedAnimal]:
+    def transform_animals_batch(
+        self, animal_details: List[AnimalDetail]
+    ) -> List[TransformedAnimal]:
         """Transform a batch of animal details."""
         logger.info(f"Transforming batch of {len(animal_details)} animals")
 
