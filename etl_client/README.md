@@ -1,0 +1,218 @@
+# Animal ETL Client 🐾
+
+A professional ETL (Extract, Transform, Load) pipeline for processing animal data from the Animals API. This client handles the chaos middleware, pagination, data transformation, and batch processing as specified in the coding challenge.
+
+## Features
+
+- ✅ **Robust HTTP Client**: Handles API chaos (delays, 5xx errors) with retry logic
+- ✅ **Pagination Support**: Efficiently fetches all animals across multiple pages
+- ✅ **Data Transformation**: Converts friends from comma-delimited strings to arrays and timestamps to ISO8601
+- ✅ **Batch Processing**: Posts animals in batches of up to 100 with concurrent processing
+- ✅ **Progress Tracking**: Real-time progress bars and comprehensive logging
+- ✅ **CLI Interface**: Easy-to-use command-line interface
+- ✅ **Configuration Management**: Environment-based configuration
+- ✅ **Error Handling**: Graceful error handling and recovery
+
+## Architecture
+
+```
+etl_client/
+├── src/etl_client/
+│   ├── __init__.py          # Package initialization
+│   ├── cli.py              # Command-line interface
+│   ├── config.py           # Configuration management
+│   ├── http_client.py      # HTTP client with retry logic
+│   ├── models.py           # Pydantic data models
+│   ├── pagination.py       # Pagination handler
+│   ├── pipeline.py         # Main ETL orchestrator
+│   ├── transformer.py      # Data transformation logic
+│   └── batch_processor.py  # Batch processing logic
+├── requirements.txt        # Python dependencies
+├── pyproject.toml         # Package configuration
+└── README.md             # This file
+```
+
+## Installation
+
+### Prerequisites
+
+- Python 3.8+
+- Access to the Animals API (running on port 3123)
+
+### Setup
+
+1. **Clone or navigate to the project directory**
+   ```bash
+   cd etl_client
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Install the package (optional, for CLI)**
+   ```bash
+   pip install -e .
+   ```
+
+## Configuration
+
+The client uses environment variables for configuration. Create a `.env` file in the project root:
+
+```bash
+# API Configuration
+API_BASE_URL=http://localhost:3123
+API_TIMEOUT=30
+API_MAX_RETRIES=5
+API_RETRY_DELAY=1
+API_BACKOFF_MULTIPLIER=2
+
+# Processing Configuration
+BATCH_SIZE=100
+MAX_WORKERS=4
+
+# Logging Configuration
+LOG_LEVEL=INFO
+LOG_FORMAT=console  # or 'json'
+```
+
+Or set environment variables directly:
+```bash
+export API_BASE_URL=http://localhost:3123
+export LOG_LEVEL=DEBUG
+```
+
+## Usage
+
+### Start the Animals API Server
+
+First, ensure the Animals API server is running. If you have the Docker setup:
+
+```bash
+# Start the API server (from the app directory)
+cd ../app
+uvicorn animal_api:app --host 0.0.0.0 --port 3123
+```
+
+### Run the Complete ETL Pipeline
+
+```bash
+# Using the CLI
+python -m etl_client.cli run
+
+# Or if installed as package
+animal-etl run
+```
+
+### Other Commands
+
+```bash
+# Fetch details for a specific animal
+python -m etl_client.cli fetch-animal --animal-id 123
+
+# List animals from a specific page
+python -m etl_client.cli list-animals --page 1
+
+# Get help
+python -m etl_client.cli --help
+```
+
+## Development
+
+### Project Structure
+
+The project follows professional Python packaging standards:
+
+- `src/etl_client/`: Main package with all modules
+- `config/`: Configuration files
+- `tests/`: Test suite (to be implemented)
+- Clean separation of concerns with dedicated modules for each responsibility
+
+### Key Components
+
+1. **HTTP Client (`http_client.py`)**: Handles all API communication with:
+   - Tenacity-based retry logic for handling server chaos
+   - Configurable timeouts and retry policies
+   - Session management for connection pooling
+
+2. **Data Models (`models.py`)**: Pydantic models for:
+   - API request/response validation
+   - Data transformation with custom validators
+   - Type safety throughout the pipeline
+
+3. **Pagination Handler (`pagination.py`)**: Efficiently handles:
+   - Multi-page API responses
+   - Progress tracking with tqdm
+   - Error recovery during pagination
+
+4. **Batch Processor (`batch_processor.py`)**: Manages:
+   - Concurrent API requests using ThreadPoolExecutor
+   - Batch size limits (max 100 animals)
+   - Memory-efficient processing
+
+5. **Transformer (`transformer.py`)**: Handles data transformations:
+   - Friends: comma-delimited string → array
+   - Born_at: Unix timestamp → ISO8601 datetime
+
+6. **Pipeline Orchestrator (`pipeline.py`)**: Coordinates the entire ETL flow:
+   - Extract: Fetch all animal IDs
+   - Transform: Convert data formats
+   - Load: POST batches to home endpoint
+
+### Error Handling
+
+The client includes comprehensive error handling:
+
+- **API Errors**: Automatic retry with exponential backoff
+- **Network Issues**: Connection pooling and timeout handling
+- **Data Validation**: Pydantic model validation
+- **Batch Failures**: Continue processing other batches
+- **Graceful Shutdown**: Proper cleanup on interruption
+
+### Logging
+
+Structured logging with multiple formats:
+
+- **Console**: Colored, human-readable logs
+- **JSON**: Machine-readable structured logs
+- Configurable log levels (DEBUG, INFO, WARNING, ERROR)
+
+## Testing
+
+```bash
+# Run tests (when implemented)
+pytest tests/
+
+# With coverage
+pytest --cov=etl_client tests/
+```
+
+## Performance Considerations
+
+- **Concurrency**: Uses ThreadPoolExecutor for parallel API calls
+- **Memory Management**: Processes animals in configurable batches
+- **Progress Tracking**: Real-time progress bars for long-running operations
+- **Connection Pooling**: HTTP session reuse for efficiency
+
+## API Challenge Requirements Met
+
+✅ **Extract**: Fetches all animals using pagination
+✅ **Transform**:
+  - Friends field: comma-delimited string → array
+  - Born_at field: Unix timestamp → ISO8601 UTC datetime
+✅ **Load**: POSTs transformed data in batches ≤ 100 animals
+✅ **Reliability**: Handles random delays (5-15s) and HTTP errors (500-504)
+✅ **Maintainability**: Clean, documented, modular code
+✅ **Professional Standards**: Proper packaging, configuration, logging
+
+## Contributing
+
+1. Follow the existing code style and structure
+2. Add tests for new functionality
+3. Update documentation as needed
+4. Use meaningful commit messages
+
+## License
+
+This project is part of a coding challenge submission.
