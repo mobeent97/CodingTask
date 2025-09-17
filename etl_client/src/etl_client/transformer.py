@@ -1,27 +1,21 @@
-"""Data transformation logic for animal data."""
-
-import logging
-from typing import List
-
 from .models import AnimalDetail, TransformedAnimal
+from typing import List
+import logging
+
 
 logger = logging.getLogger(__name__)
 
 
 class AnimalTransformer:
-    """Handles transformation of animal data."""
 
     def transform_animal(self, animal_detail: AnimalDetail) -> TransformedAnimal:
-        """Transform a single animal's data."""
         logger.debug(f"Transforming animal {animal_detail.id}: {animal_detail.name}")
-
         try:
-            # The Pydantic validators will handle the transformation
             transformed = TransformedAnimal(
                 id=animal_detail.id,
                 name=animal_detail.name,
-                born_at=animal_detail.born_at,  # type: ignore
-                friends=animal_detail.friends,  # type: ignore
+                born_at=animal_detail.born_at,
+                friends=animal_detail.friends
             )
             logger.debug(f"Successfully transformed animal {animal_detail.id}")
             return transformed
@@ -32,12 +26,9 @@ class AnimalTransformer:
     def transform_animals_batch(
         self, animal_details: List[AnimalDetail]
     ) -> List[TransformedAnimal]:
-        """Transform a batch of animal details."""
         logger.info(f"Transforming batch of {len(animal_details)} animals")
-
         transformed_animals = []
         errors = []
-
         for animal_detail in animal_details:
             try:
                 transformed = self.transform_animal(animal_detail)
