@@ -61,7 +61,6 @@ class BatchProcessor:
                 work_queue.task_done()
 
             logger.info(f"Worker {worker_id}: Finished processing all assigned batches")
-        # Start worker threads
         workers = []
         logger.info(f"Starting {self.max_workers} concurrent ETL worker threads")
         for worker_id in range(self.max_workers):
@@ -72,7 +71,6 @@ class BatchProcessor:
             workers.append(worker_thread)
         work_queue.join()
 
-        # Wait for all worker threads to finish
         logger.info("Waiting for all worker threads to complete...")
         for i, worker in enumerate(workers, 1):
             worker.join()
