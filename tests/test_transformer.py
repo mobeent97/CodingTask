@@ -19,7 +19,7 @@ class TestAnimalTransformer:
             id=1,
             name="Test Lion",
             born_at=1640995200000,  # 2022-01-01 00:00:00 UTC
-            friends="Dog,Cat,Elephant"
+            friends=["Dog", "Cat", "Elephant"]
         )
 
     def test_transform_single_animal(self, transformer, sample_animal_detail):
@@ -34,9 +34,9 @@ class TestAnimalTransformer:
     def test_transform_animals_batch(self, transformer):
         """Test transforming a batch of animals."""
         animals = [
-            AnimalDetail(id=1, name="Lion", born_at=1640995200000, friends="Dog,Cat"),
-            AnimalDetail(id=2, name="Tiger", born_at=None, friends=""),
-            AnimalDetail(id=3, name="Bear", born_at=1641081600000, friends="Wolf,Fox")
+            AnimalDetail(id=1, name="Lion", born_at=1640995200000, friends=["Dog", "Cat"]),
+            AnimalDetail(id=2, name="Tiger", born_at=None, friends=[]),
+            AnimalDetail(id=3, name="Bear", born_at=1641081600000, friends=["Wolf", "Fox"])
         ]
 
         results = transformer.transform_animals_batch(animals)
@@ -57,18 +57,18 @@ class TestAnimalTransformer:
 
     def test_transform_with_invalid_data(self, transformer):
         """Test transforming animals with invalid data."""
-        # Animal with invalid friends format
+        # Animal with empty friends list
         invalid_animal = AnimalDetail(
             id=1,
             name="Test Animal",
             born_at=1640995200000,
-            friends="Invalid,Format,"  # Trailing comma
+            friends=[]  # Empty friends list
         )
 
         result = transformer.transform_animal(invalid_animal)
 
-        # Should handle gracefully - empty strings are filtered out
-        assert result.friends == ["Invalid", "Format"]  # Empty strings filtered out
+        # Should handle gracefully - empty list remains empty
+        assert result.friends == []
 
     def test_transform_empty_batch(self, transformer):
         """Test transforming an empty batch."""
@@ -79,7 +79,7 @@ class TestAnimalTransformer:
         """Test that batch transformation continues despite individual errors."""
         # Mix of valid and invalid animals
         animals = [
-            AnimalDetail(id=1, name="Valid", born_at=1640995200000, friends="Dog"),
+            AnimalDetail(id=1, name="Valid", born_at=1640995200000, friends=["Dog"]),
             # This would cause issues in real scenarios, but our models are forgiving
         ]
 

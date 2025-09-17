@@ -13,13 +13,13 @@ class TestAnimalModels:
             id=1,
             name="Test Animal",
             born_at=1640995200000,  # 2022-01-01 00:00:00 UTC in milliseconds
-            friends="Dog,Cat,Bird"
+            friends=["Dog", "Cat", "Bird"]
         )
 
         assert animal.id == 1
         assert animal.name == "Test Animal"
         assert animal.born_at == 1640995200000
-        assert animal.friends == "Dog,Cat,Bird"
+        assert animal.friends == ["Dog", "Cat", "Bird"]
 
     def test_transformed_animal_friends_transformation(self):
         """Test that friends string is transformed to array."""
@@ -81,7 +81,7 @@ class TestDataValidation:
                 id="invalid",
                 name="Test Animal",
                 born_at=1640995200000,
-                friends="Dog"
+                friends=["Dog"]
             )
 
     def test_missing_required_fields(self):
@@ -91,5 +91,5 @@ class TestDataValidation:
                 id=1,
                 # Missing name
                 born_at=1640995200000,
-                friends="Dog"
+                friends=["Dog"]
             )
