@@ -1,9 +1,6 @@
-"""Data models for the Animal ETL pipeline."""
-
-from datetime import datetime
-from typing import List, Optional
-
 from pydantic import BaseModel, validator
+from typing import List, Optional
+from datetime import datetime
 
 
 class BaseAnimal(BaseModel):
@@ -13,14 +10,52 @@ class BaseAnimal(BaseModel):
     name: str
     born_at: Optional[int]  # Unix timestamp in milliseconds
 
+    @validator("born_at", pre=True, always=True)
+    def parse_born_at(cls, v) -> Optional[int]:
+        if v is None:
+            return None
+        if isinstance(v, int):
+            return v
+        if isinstance(v, str):
+            try:
+                dt = datetime.fromisoformat(v.replace('Z', '+00:00'))
+                return int(dt.timestamp() * 1000)
+            except ValueError:
+                try:
+                    return int(float(v))
+                except (ValueError, TypeError):
+                    return None
+        if isinstance(v, datetime):
+            return int(v.timestamp() * 1000)
+        return None
+
 
 class AnimalDetail(BaseModel):
     """Detailed animal model from individual animal endpoint."""
 
     id: int
     name: str
-    born_at: Optional[int]  # Unix timestamp in milliseconds
-    friends: str  # Comma-delimited string
+    born_at: Optional[int]
+    friends: List[str]
+
+    @validator("born_at", pre=True, always=True)
+    def parse_born_at(cls, v) -> Optional[int]:
+        if v is None:
+            return None
+        if isinstance(v, int):
+            return v
+        if isinstance(v, str):
+            try:
+                dt = datetime.fromisoformat(v.replace('Z', '+00:00'))
+                return int(dt.timestamp() * 1000)
+            except ValueError:
+                try:
+                    return int(float(v))
+                except (ValueError, TypeError):
+                    return None
+        if isinstance(v, datetime):
+            return int(v.timestamp() * 1000)
+        return None
 
 
 class TransformedAnimal(BaseModel):
@@ -29,24 +64,28 @@ class TransformedAnimal(BaseModel):
     id: int
     name: str
     born_at: Optional[str]  # ISO8601 timestamp string in UTC
-    friends: List[str]  # Array of friend names
+    friends: List[str]
 
     @validator("born_at", pre=True, always=True)
     def transform_born_at(cls, v: Optional[int]) -> Optional[str]:
         """Transform Unix timestamp to ISO8601 timestamp string."""
         if v is None:
             return None
-        # Convert from milliseconds to seconds
         timestamp_seconds = v / 1000
         dt = datetime.fromtimestamp(timestamp_seconds)
         return dt.isoformat()
 
     @validator("friends", pre=True, always=True)
-    def transform_friends(cls, v: str) -> List[str]:
-        """Transform comma-delimited string to array."""
-        if not v or v.strip() == "":
+    def transform_friends(cls, v) -> List[str]:
+        if v is None:
             return []
-        return [friend.strip() for friend in v.split(",") if friend.strip()]
+        if isinstance(v, list):
+            return v
+        if isinstance(v, str):
+            if not v or v.strip() == "":
+                return []
+            return [friend.strip() for friend in v.split(",") if friend.strip()]
+        return []
 
 
 class AnimalsPage(BaseModel):
